@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QImage>
 HttpServer::HttpServer(QObject *parent)
     : QTcpServer{parent}
 {
@@ -88,25 +89,49 @@ void HttpTask::handleProcessRequest(QTcpSocket* socket, const QByteArray& reques
     // 继续处理文件路径
     QFile file(filePath);
     if (file.exists() && file.open(QIODevice::ReadOnly)) {
-        QByteArray fileData = file.readAll();
-        qDebug() << "File size:" << fileData.size();
+        QImage image;
+        if (image.loadFromData(file.readAll())) {
+            // 示例：将图片缩小为 100x100 像素
+            //image = image.scaled(100, 100, Qt::KeepAspectRatio);
+            QFileInfo fileInfo(filePath);
+            QString fileName = fileInfo.fileName();  // 获取文件名
+            // 保存处理后的图片
+            QString outputFilePath = "../image-uploader/output/"+ fileName;
+            if (image.save(outputFilePath)) {
+                qDebug() << "Image processed and saved to:" << outputFilePath;
 
-        QByteArray response = generateHttpResponse("File processed successfully");
-        socket->write(response);
-        socket->flush();
+                // 返回处理结果（文件路径）
+                QByteArray response = generateHttpResponse(fileName);
+                socket->write(response);
+                socket->flush();
+            }
+            else {
+                QByteArray response = generateHttpResponse("Failed to save processed image");
+                socket->write(response);
+                socket->flush();
+            }
+        }
+        else {
+            QByteArray response = generateHttpResponse("Failed to load image");
+            socket->write(response);
+            socket->flush();
+        }
     }
     else {
-        qDebug() << "File not found or failed to open";
         QByteArray response = generateHttpResponse("File not found or failed to open");
         socket->write(response);
         socket->flush();
     }
 }
 
-QByteArray HttpTask::generateHttpResponse(const QString& message) {
+QByteArray HttpTask::generateHttpResponse(const QString& outputName) {
     QByteArray response = "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
+        "Content-Type: application/json\r\n"  // 更改为 JSON 格式
         "Connection: close\r\n\r\n";
-    response += message.toUtf8();
+
+    // 构建包含处理后的文件名的 JSON 数据
+    QByteArray jsonResponse = "{ \"processedFileName\": \"" + outputName.toUtf8() + "\" }";
+    response += jsonResponse;
+
     return response;
 }
