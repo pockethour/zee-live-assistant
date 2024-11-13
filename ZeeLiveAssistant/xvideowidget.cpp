@@ -191,12 +191,10 @@ void XVideoWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void XVideoWidget::initialize()
 {
-    //return;
-    //SetThreadNum(1);
     sceneId = OpenglImageManager::instance()->genSceneFilters();
     channelId = OpenglImageManager::instance()->genChannelFilters(sceneId);
-    staticImg = QImage("d:\\tmp\\green3.jpg");
-    staticImg = staticImg.convertToFormat(QImage::Format_RGBA8888);
+    //staticImg = QImage("d:\\tmp\\green3.jpg");
+    //staticImg = staticImg.convertToFormat(QImage::Format_RGBA8888);
     if (!rgbRender)
         rgbRender = new RgbRenderer;
     if (isBgChanged)

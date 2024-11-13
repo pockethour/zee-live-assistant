@@ -1,4 +1,4 @@
-QT       += core gui opengl gui-private
+QT       += core gui opengl gui-private network
 macx: QT += macextras
 win32:QT += winextras testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -289,11 +289,13 @@ macx {
 LIBS += -lavutil -lavcodec -lavdevice -lswscale -lavformat -lavfilter -lswresample
 
 SOURCES += main.cpp\
+    httpserver.cpp \
         player.cpp \
     xvideowidget.cpp \
     rgbrenderer.cpp
 
 HEADERS  += player.h \
+    httpserver.h \
     xvideowidget.h \
     rgbrenderer.h
 
