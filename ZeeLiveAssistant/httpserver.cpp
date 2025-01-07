@@ -95,12 +95,12 @@ void HttpTask::handleProcessRequest(QTcpSocket* socket, const QByteArray& reques
             //image = image.scaled(100, 100, Qt::KeepAspectRatio);
             QFileInfo fileInfo(filePath);
             QString fileName = fileInfo.fileName();  // 获取文件名
-            // 保存处理后的图片
-            QString outputFilePath = "../image-uploader/output/"+ fileName;
-            if (image.save(outputFilePath)) {
-                qDebug() << "Image processed and saved to:" << outputFilePath;
-
-                // 返回处理结果（文件路径）
+            if (!fileName.endsWith(".png", Qt::CaseInsensitive)) {
+                fileName.replace(QRegExp("\\.[^\\.]*$"), ".png");  // 将文件扩展名替换为 .png
+            }
+            QString outputFilePath = "../image-uploader/output/" + fileName;
+            if (image.save(outputFilePath, "PNG")) {
+                //qDebug() << "Image processed and saved to:" << outputFilePath;
                 QByteArray response = generateHttpResponse(fileName);
                 socket->write(response);
                 socket->flush();
