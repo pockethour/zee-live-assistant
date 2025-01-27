@@ -67,6 +67,7 @@ win32 {
 macx {
     INCLUDEPATH += \
     $$THIRDPARTY_PATH/ffmpeg/macx/include \
+    $$THIRDPARTY_PATH/imageeffect/include \
     $$THIRDPARTY_PATH/opencv/macx/include/opencv4  \
     $$THIRDPARTY_PATH/eeocamera/include \
     $$THIRDPARTY_PATH/sdl2/macx/include
@@ -129,13 +130,14 @@ CONFIG(debug, debug|release) {
     -lopencv_highgui \
     -lopencv_video \
     -lopencv_calib3d
-
+    LIBS += -L$$THIRDPARTY_PATH/imageeffect/macx/release \
+       -limage_effect
     LIBS += -L$$THIRDPARTY_PATH/arithmetic_dnnl/mac/release \
              -leeodnnl
     LIBS += -L$$THIRDPARTY_PATH/eeocamera/macx/lib \
              -lEeoCamera
-    LIBS += -F$$THIRDPARTY_PATH/sdl2/macx/
-    LIBS += -framework SDL2
+    #LIBS += -F$$THIRDPARTY_PATH/sdl2/macx/
+    #LIBS += -framework SDL2
     }
 }
 
